@@ -24,3 +24,4 @@ def get_file_content(working_directory, file_path):
         file_content_string += (f'\n[...File "{file_path}" truncated at 10000 characters]')
 
     return file_content_string
+    
