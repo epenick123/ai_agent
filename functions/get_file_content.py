@@ -2,7 +2,7 @@ import os
 
 def get_file_content(working_directory, file_path):
     abs_working = os.path.abspath(working_directory)
-    abs_file_path = os.path.abspath(file_path)
+    abs_file_path = os.path.abspath(os.path.join(working_directory, file_path))
     
     if not (abs_file_path == abs_working or abs_file_path.startswith(abs_working + os.sep)):
         return(f'Error: Cannot read "{file_path}" as it is outside the permitted working directory')
@@ -24,4 +24,3 @@ def get_file_content(working_directory, file_path):
         file_content_string += (f'\n[...File "{file_path}" truncated at 10000 characters]')
 
     return file_content_string
-    
