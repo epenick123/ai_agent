@@ -103,26 +103,26 @@ api_key = os.environ.get("GEMINI_API_KEY")
 
 client = genai.Client(api_key=api_key)
 
-response = client.models.generate_content(
-    model=model_name,
-    contents=messages,
-    config=types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt,)
-)
-for call in response.function_calls:
-    function_call_result = call_function(call, verbose="--verbose" in sys.argv)
-for call in response.function_calls:
-    function_call_result = call_function(call, verbose="--verbose" in sys.argv)
-    # Print the result if verbose
-    if (function_call_result.parts 
-        and hasattr(function_call_result.parts[0], "function_response") 
-        and function_call_result.parts[0].function_response.response is not None 
-        and "--verbose" in sys.argv):
-        print(f"-> {function_call_result.parts[0].function_response.response}")
-    elif not (function_call_result.parts 
-        and hasattr(function_call_result.parts[0], "function_response") 
-        and function_call_result.parts[0].function_response.response is not None):
-        raise Exception("Fatal: Missing function response in Content")
+for i in range(20):
+    response = client.models.generate_content(
+        model=model_name,
+        contents=messages,
+        config=types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt)
+    )
+    for candidate in response.candidates:
+        messages.append(candidate.content)
+    if not response.function_calls:
+        # Print the model's final answer and break!
+        print(response.text)
+        break
+    for call in response.function_calls:
+        result = call_function(call, verbose="--verbose" in sys.argv)
+        messages.append(result)
 
+
+
+
+print(response.text)
 if len(response.function_calls) == 0:
     if len(sys.argv)==2: 
         print(response.text)
